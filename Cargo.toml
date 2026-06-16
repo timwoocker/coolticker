@@ -1,0 +1,29 @@
+[package]
+name = "coolticker"
+version = "0.1.0"
+edition = "2024"
+description = "A small ticker abstraction with sync, async (tokio), randomizable, and mockable interval implementations."
+license = "MIT"
+repository = "https://github.com/timwoocker/coolticker"
+readme = "README.md"
+keywords = ["ticker", "interval", "tokio", "timer", "mock"]
+categories = ["asynchronous", "development-tools::testing"]
+authors = ["Tim Woocker", "Christoph Lütticke"]
+
+[dependencies]
+flume = { version = "0.12.0", optional = true }
+tokio = { version = "1.52.3", features = ["time"], optional = true }
+rand = { version = "0.10.1", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1.52.3", features = ["rt", "macros", "time", "test-util"] }
+
+[features]
+default = []
+tokio = ["dep:tokio"]
+sync = []
+randomizable = ["dep:rand"]
+mock = ["dep:flume"]
+
+[package.metadata.docs.rs]
+all-features = true
