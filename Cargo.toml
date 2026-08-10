@@ -1,19 +1,31 @@
 [package]
 name = "coolticker"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "A small ticker abstraction with sync, async (tokio), randomizable, and mockable interval implementations."
 license = "MIT"
 repository = "https://github.com/timwoocker/coolticker"
 readme = "README.md"
-keywords = ["ticker", "interval", "tokio", "timer", "mock"]
+keywords = ["interval", "tokio", "timer", "mock", "wasm"]
 categories = ["asynchronous", "development-tools::testing"]
 authors = ["Tim Woocker", "Christoph Lütticke"]
 
 [dependencies]
 flume = { version = "0.12.0", optional = true }
 tokio = { version = "1.52.3", features = ["time"], optional = true }
+
+# `rand` is declared per target family because its default features pull in
+# `getrandom`, which fails to build on wasm32-unknown-unknown unless the user
+# configures a backend. The wasm tickers seed `SmallRng` from `Math.random`
+# instead, so they need none of that.
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
 rand = { version = "0.10.1", optional = true }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+rand = { version = "0.10.1", optional = true, default-features = false }
+gloo-timers = { version = "0.4.0", features = ["futures"], optional = true }
+js-sys = { version = "0.3", optional = true }
+wasm-bindgen = { version = "0.2", optional = true }
 
 [dev-dependencies]
 tokio = { version = "1.52.3", features = ["rt", "macros", "time", "test-util"] }
@@ -24,6 +36,8 @@ tokio = ["dep:tokio"]
 sync = []
 randomizable = ["dep:rand"]
 mock = ["dep:flume"]
+wasm = ["dep:gloo-timers", "dep:js-sys", "dep:wasm-bindgen"]
 
 [package.metadata.docs.rs]
 all-features = true
+targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]

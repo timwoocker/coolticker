@@ -31,7 +31,7 @@ impl AsyncTicker for Interval {
     }
 }
 
-#[cfg(feature = "randomizable")]
+#[cfg(all(feature = "randomizable", not(target_family = "wasm")))]
 mod random {
     use super::Interval;
     use crate::{AsyncTicker, Randomizable};
@@ -116,5 +116,5 @@ mod random {
     }
 }
 
-#[cfg(feature = "randomizable")]
+#[cfg(all(feature = "randomizable", not(target_family = "wasm")))]
 pub use random::RandomIntervalTicker;

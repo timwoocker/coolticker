@@ -37,7 +37,6 @@ impl IntervalTicker {
 
     /// Restart the ticker with a new period. Like [`Ticker::reset`], the next
     /// tick is scheduled one full period from now (it does not fire immediately).
-    #[cfg(feature = "randomizable")]
     fn restart_with_period(&mut self, period: Duration) {
         self.period = period;
         self.next = Instant::now() + period;
@@ -58,7 +57,7 @@ impl Ticker for IntervalTicker {
     }
 }
 
-#[cfg(feature = "randomizable")]
+#[cfg(all(feature = "randomizable", not(target_family = "wasm")))]
 mod random {
     use super::IntervalTicker;
     use crate::{Randomizable, Ticker};
@@ -135,5 +134,5 @@ mod random {
     }
 }
 
-#[cfg(feature = "randomizable")]
+#[cfg(all(feature = "randomizable", not(target_family = "wasm")))]
 pub use random::RandomIntervalTicker;
